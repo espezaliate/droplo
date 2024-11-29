@@ -12,7 +12,8 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = "rounded-lg border py-2.5 px-3.5 gap-1";
+  const baseStyles =
+    "rounded-lg border py-2.5 px-3.5 gap-1 font-semibold text-sm";
   const variantStyles = {
     primary:
       "bg-button-primary-bg text-button-primary-fg border-button-primary-border",
