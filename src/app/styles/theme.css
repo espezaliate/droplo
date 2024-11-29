@@ -1,0 +1,29 @@
+:root {
+  /* Background colors */
+  --background: #f5f5f5;
+  --background-primary: #ffffff;
+  --background-secondary: #f9fafb;
+
+  /* Border colors */
+  --border-primary: #d0d5dd;
+  --border-secondary: #f9fafb;
+
+  /* Button colors */
+  --button-primary-background: #7f56d9;
+  --button-primary-border: #7f56d9;
+  --button-primary-foreground: #fff;
+
+  --button-secondary-background: #ffffff;
+  --button-secondary-border: #d0d5dd;
+  --button-secondary-foreground: #344054;
+
+  --button-tertiary-background: #fff;
+  --button-tertiary-border: #d6bbfb;
+  --button-tertiary-foreground: #6941c6;
+
+  /* Text colors */
+  --text-primary: #101828;
+  --text-secondary: #101828;
+  --text-tertiary: #475467;
+  --text-placeholder: #667085;
+}
