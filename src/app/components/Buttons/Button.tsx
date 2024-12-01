@@ -1,28 +1,23 @@
 import React from "react";
+import { ButtonTypes } from "./types/button";
+import { buttonVariantStyles } from "./styles/variants";
 
-type ButtonProps = {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "tertiary";
+  variant?: ButtonTypes;
   className?: string;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+}
 
 export const Button: React.FC<ButtonProps> = ({
-  variant = "primary",
+  variant = ButtonTypes.PRIMARY,
   className,
   children,
   ...props
 }) => {
   const baseStyles =
     "rounded-lg border py-2.5 px-3.5 gap-1 font-semibold text-sm";
-  const variantStyles = {
-    primary:
-      "bg-button-primary-bg text-button-primary-fg border-button-primary-border",
-    secondary:
-      "bg-button-secondary-bg text-button-secondary-fg border-button-secondary-border",
-    tertiary:
-      "bg-button-tertiary-bg text-button-tertiary-fg border-button-tertiary-border",
-  };
-  const buttonStyles = `${baseStyles} ${variantStyles[variant]} ${className}`;
+
+  const buttonStyles = `${baseStyles} ${buttonVariantStyles[variant]} ${className}`;
   return (
     <button type="button" className={buttonStyles} {...props}>
       {children}
