@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/app/_components/Buttons/Button";
-import { AddIcon } from "@/app/_components/Icons/AddIcon";
+import { Button } from "@/app/components/Buttons/Button";
+import { AddIcon } from "@/app/assets/icons/AddIcon";
 
 export const EmptyMenu = () => {
   return (
