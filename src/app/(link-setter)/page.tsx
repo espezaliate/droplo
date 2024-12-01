@@ -17,7 +17,7 @@ export default function Home() {
       {!linkList.length ? (
         <EmptyMenu setLinkList={setLinkList} />
       ) : (
-        <LinkListContainer linkList={linkList} />
+        <LinkListContainer linkList={linkList} setLinkList={setLinkList} />
       )}
       <ManageLink setLinkList={setLinkList} />
     </div>

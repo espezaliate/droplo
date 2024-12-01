@@ -19,7 +19,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   const buttonStyles = `${baseStyles} ${buttonVariantStyles[variant]} ${className}`;
   return (
-    <button type="button" className={buttonStyles} {...props}>
+    <button
+      type="button"
+      className={`${buttonStyles} ${props.disabled ? "opacity-50" : ""}`}
+      {...props}
+    >
       {children}
     </button>
   );

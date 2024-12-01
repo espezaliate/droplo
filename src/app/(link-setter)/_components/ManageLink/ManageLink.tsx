@@ -12,26 +12,29 @@ interface ManageLinkProps {
   setLinkList: React.Dispatch<React.SetStateAction<Link[]>>;
   linkKey: string;
   cancel: () => void;
-  id?: string;
+  link?: Link;
 }
 
 export const ManageLink: React.FC<ManageLinkProps> = ({
   setLinkList,
   cancel,
   linkKey,
-  id,
+  link,
 }) => {
-  const { handleSubmit, register } = useForm<ManageLinkFormValues>();
+  const { handleSubmit, register } = useForm<ManageLinkFormValues>({
+    defaultValues: link ? link : { name: "", url: "" },
+  });
 
   const onSubmit = handleSubmit((data) => {
-    if (id) {
+    if (link) {
       setLinkList((prev) =>
-        prev.map((link) => (id === link.id ? { ...link, ...data } : link))
+        prev.map((l) => (l.id === link.id ? { ...link, ...data } : l))
       );
     } else {
       const id = crypto.randomUUID();
       setLinkList((prev) => [...prev, { id, key: linkKey, ...data }]);
     }
+    cancel();
   });
 
   return (
@@ -43,7 +46,7 @@ export const ManageLink: React.FC<ManageLinkProps> = ({
               <Input
                 label="Nazwa"
                 placeholder="np. Promocje"
-                {...register("name")}
+                {...register("name", { required: true })}
               />
               <Input
                 label="Link"
@@ -59,7 +62,7 @@ export const ManageLink: React.FC<ManageLinkProps> = ({
               Anuluj
             </Button>
             <Button type="submit" variant={ButtonTypes.TERTIARY}>
-              Dodaj
+              {link ? "Zapisz" : "Dodaj"}
             </Button>
           </div>
         </div>

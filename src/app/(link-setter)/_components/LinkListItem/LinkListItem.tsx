@@ -1,21 +1,42 @@
 import { MoveIcon } from "@/app/assets/icons/MoveIcon";
-import { Box } from "@/app/components/Box/Box";
-import { Button } from "@/app/components/Buttons/Button";
 import { ButtonGroup } from "@/app/components/Buttons/ButtonGroup";
 import { ButtonTypes } from "@/app/components/Buttons/types/button";
-import React from "react";
+import { Link } from "@/app/types/interfaces/LinkSetter";
+import React, { useState } from "react";
+import { ManageLink } from "../ManageLink/ManageLink";
 
 interface LinkListItemProps {
-  name: string;
-  url?: string;
+  link: Link;
+  setLinkList: React.Dispatch<React.SetStateAction<Link[]>>;
 }
 
-export const LinkListItem: React.FC<LinkListItemProps> = ({ name, url }) => {
+export const LinkListItem: React.FC<LinkListItemProps> = ({
+  link,
+  setLinkList,
+}) => {
+  const [editMode, setEditMode] = useState<Boolean>(false);
+  const { id, name, url, key } = link;
   const buttons = [
-    { label: "Usuń" },
-    { label: "Edytuj" },
+    {
+      label: "Usuń",
+      props: {
+        onClick: () => setLinkList((prev) => prev.filter((l) => l.id !== id)),
+      },
+    },
+    { label: "Edytuj", props: { onClick: () => setEditMode(true) } },
     { label: "Dodaj pozycję menu" },
   ];
+  if (editMode) {
+    return (
+      <ManageLink
+        setLinkList={setLinkList}
+        linkKey={key}
+        cancel={() => setEditMode(false)}
+        link={link}
+      />
+    );
+  }
+
   return (
     <div className="flex py-4 px-6 bg-bg-primary text-sm justify-between w-full">
       <div className="flex items-center">

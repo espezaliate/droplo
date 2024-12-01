@@ -16,7 +16,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex w-full divide-x border rounded overflow-hidden ${buttonColors[variant].border}`}
+      className={`flex w-full divide-x border rounded-lg overflow-hidden ${buttonColors[variant].border}`}
     >
       {buttons.map((button, index) => (
         <button
