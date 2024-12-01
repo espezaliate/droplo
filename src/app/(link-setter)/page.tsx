@@ -9,14 +9,17 @@ import { LinkListContainer } from "./_components/LinkListContainer/LinkListConta
 
 export default function Home() {
   const [linkList, setLinkList] = useState<Link[]>([
-    { name: "123" },
-    { name: "234" },
+    // { name: "123" },
+    // { name: "234" },
   ]);
   return (
     <div className="px-2 py-4 flex flex-col gap-4">
-      <EmptyMenu />
+      {!linkList.length ? (
+        <EmptyMenu setLinkList={setLinkList} />
+      ) : (
+        <LinkListContainer linkList={linkList} />
+      )}
       <ManageLink setLinkList={setLinkList} />
-      <LinkListContainer linkList={linkList} />
     </div>
   );
 }

@@ -10,16 +10,18 @@ import { useForm } from "react-hook-form";
 
 interface ManageLinkProps {
   setLinkList: React.Dispatch<React.SetStateAction<Link[]>>;
-  key: string;
+  linkKey: string;
+  cancel: () => void;
   id?: string;
 }
 
 export const ManageLink: React.FC<ManageLinkProps> = ({
   setLinkList,
-  key,
+  cancel,
+  linkKey,
   id,
 }) => {
-  const { handleSubmit } = useForm<ManageLinkFormValues>();
+  const { handleSubmit, register } = useForm<ManageLinkFormValues>();
 
   const onSubmit = handleSubmit((data) => {
     if (id) {
@@ -28,7 +30,7 @@ export const ManageLink: React.FC<ManageLinkProps> = ({
       );
     } else {
       const id = crypto.randomUUID();
-      setLinkList((prev) => [...prev, { id, key, ...data }]);
+      setLinkList((prev) => [...prev, { id, key: linkKey, ...data }]);
     }
   });
 
@@ -38,18 +40,27 @@ export const ManageLink: React.FC<ManageLinkProps> = ({
         <div className="flex flex-col gap-5">
           <div className="flex gap-4">
             <div className="flex flex-col w-full gap-2">
-              <Input label="Nazwa" placeholder="np. Promocje" />
+              <Input
+                label="Nazwa"
+                placeholder="np. Promocje"
+                {...register("name")}
+              />
               <Input
                 label="Link"
                 placeholder="Wklej lub wyszukaj"
                 addOn={<SearchIcon />}
+                {...register("url")}
               />
             </div>
-            <DeleteIcon />
+            <DeleteIcon onClick={() => cancel()} className="cursor-pointer" />
           </div>
           <div className="flex gap-2">
-            <Button variant={ButtonTypes.SECONDARY}>Anuluj</Button>
-            <Button variant={ButtonTypes.TERTIARY}>Dodaj</Button>
+            <Button onClick={() => cancel()} variant={ButtonTypes.SECONDARY}>
+              Anuluj
+            </Button>
+            <Button type="submit" variant={ButtonTypes.TERTIARY}>
+              Dodaj
+            </Button>
           </div>
         </div>
       </form>
