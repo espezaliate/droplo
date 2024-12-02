@@ -1,4 +1,4 @@
-import { Link } from "@/app/types/interfaces/LinkSetter";
+import { Link } from "@/app/types/interfaces/Link";
 import { LinkListItem } from "../LinkListItem/LinkListItem";
 
 export const renderLinks = (

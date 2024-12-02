@@ -1,7 +1,7 @@
 import { MoveIcon } from "@/app/assets/icons/MoveIcon";
 import { ButtonGroup } from "@/app/components/Buttons/ButtonGroup";
 import { ButtonTypes } from "@/app/components/Buttons/types/button";
-import { Link } from "@/app/types/interfaces/LinkSetter";
+import { Link } from "@/app/types/interfaces/Link";
 import React, { useState } from "react";
 import { ManageLink } from "../ManageLink/ManageLink";
 import { useDroppable } from "@dnd-kit/core";

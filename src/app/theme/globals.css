@@ -4,6 +4,5 @@
 
 body {
   background: var(--background);
-  font-family: "Inter", Helvetica, sans-serif;
   color: var(--text-primary);
 }

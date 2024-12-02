@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { EmptyMenu } from "./_components/EmptyMenu/EmptyMenu";
 import { ManageLink } from "./_components/ManageLink/ManageLink";
-import { Link } from "../types/interfaces/LinkSetter";
+import { Link } from "../types/interfaces/Link";
 import { LinkListItem } from "./_components/LinkListItem/LinkListItem";
 import { LinkListContainer } from "./_components/LinkListContainer/LinkListContainer";
 

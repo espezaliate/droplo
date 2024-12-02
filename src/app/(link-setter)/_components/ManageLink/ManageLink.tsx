@@ -4,7 +4,7 @@ import { Box } from "@/app/components/Box/Box";
 import { Button } from "@/app/components/Buttons/Button";
 import { ButtonTypes } from "@/app/components/Buttons/types/button";
 import { Input } from "@/app/components/Input/Input";
-import { Link, ManageLinkFormValues } from "@/app/types/interfaces/LinkSetter";
+import { Link, ManageLinkFormValues } from "@/app/types/interfaces/Link";
 import React from "react";
 import { useForm } from "react-hook-form";
 

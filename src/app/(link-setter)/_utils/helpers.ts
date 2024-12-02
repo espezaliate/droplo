@@ -1,4 +1,4 @@
-import { Link } from "@/app/types/interfaces/LinkSetter";
+import { Link } from "@/app/types/interfaces/Link";
 
 export const findLargestKey = (linkList: Link[]) =>
   Number(

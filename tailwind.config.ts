@@ -28,6 +28,9 @@ export default {
         "text-tertiary": "var(--text-tertiary)",
         "text-placeholder": "var(--text-placeholder)",
       },
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+      },
     },
   },
   plugins: [],

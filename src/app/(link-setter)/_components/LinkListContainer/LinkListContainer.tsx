@@ -1,5 +1,5 @@
 import { Box } from "@/app/components/Box/Box";
-import { Link } from "@/app/types/interfaces/LinkSetter";
+import { Link } from "@/app/types/interfaces/Link";
 import React, { useState } from "react";
 import { Button } from "@/app/components/Buttons/Button";
 import { ButtonTypes } from "@/app/components/Buttons/types/button";

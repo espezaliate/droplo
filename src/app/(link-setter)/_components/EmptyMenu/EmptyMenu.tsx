@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/app/components/Buttons/Button";
 import { AddIcon } from "@/app/assets/icons/AddIcon";
 import { ManageLink } from "../ManageLink/ManageLink";
-import { Link } from "@/app/types/interfaces/LinkSetter";
+import { Link } from "@/app/types/interfaces/Link";
 
 interface EmptyMenuProps {
   setLinkList: React.Dispatch<React.SetStateAction<Link[]>>;
