@@ -27,28 +27,28 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
   const { setNodeRef: setDroppableNodeRef } = useDroppable({
     id: key,
   });
+
   const {
     setNodeRef: setDraggableNodeRef,
-    active,
-    attributes,
     listeners,
+    attributes,
     transform,
     transition,
-  } = useSortable({ id: key, data: link });
+  } = useSortable({ id: key });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition || undefined,
+    transition,
   };
+
   const nestLevel = key.split("-").length - 1;
   const keyArray = key.split("-");
   const indentation = {
     marginLeft: nestLevel * 4 + "rem",
   };
-  console.log(linkList);
-  const hasChildren = linkList.some(
-    (value) => value.key.split("-").splice(0, -1).join("") === keyArray.join("")
-  );
+
+  const hasAddLinkMode = (key: string) =>
+    addLinkModes.some((mode) => `${key}-${mode}`.startsWith(key));
 
   const handleAddLink = (parentKey: string) => {
     const parentChildren = linkList.filter((link) => {
@@ -125,20 +125,26 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
   ];
 
   return (
-    <div className="flex flex-col border-none" ref={setDraggableNodeRef}>
+    <div
+      className="flex flex-col border-none"
+      ref={(node) => {
+        setDroppableNodeRef(node);
+        setDraggableNodeRef(node);
+      }}
+      style={style}
+    >
       {!editMode && (
         <div
           ref={setDroppableNodeRef}
           className={`flex py-4 px-6 bg-bg-primary border-border-primary text-sm justify-between border-b
             ${nestLevel > 0 ? "rounded-bl-lg border-l" : ""} 
-          ${parentEditMode ? "rounded-tl-lg border-t" : ""}
           `}
           style={{
             ...indentation,
           }}
         >
-          <div className="flex items-center" ref={setDraggableNodeRef}>
-            <div {...attributes} {...listeners} style={style}>
+          <div className="flex items-center">
+            <div {...listeners} {...attributes}>
               <MoveIcon />
             </div>
             <div className="flex flex-col gap-1.5">
