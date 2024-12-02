@@ -23,7 +23,7 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [addLinkModes, setAddLinkModes] = useState<number[]>([]);
-  const { id, name, url, key, children } = link;
+  const { id, name, url, key } = link;
   const { setNodeRef: setDroppableNodeRef } = useDroppable({
     id: key,
   });
@@ -40,57 +40,102 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
     transform: CSS.Transform.toString(transform),
     transition: transition || undefined,
   };
+  const nestLevel = key.split("-").length - 1;
+  const keyArray = key.split("-");
+  const indentation = {
+    marginLeft: nestLevel * 4 + "rem",
+  };
+  console.log(linkList);
+  const hasChildren = linkList.some(
+    (value) => value.key.split("-").splice(0, -1).join("") === keyArray.join("")
+  );
 
-  const nestLevel = key.split("-").length;
-  const handleAddLink = () => {
-    const newKey = Number(key.split("-").pop() || 0);
-    setAddLinkModes((prev) => [...prev, newKey]);
+  const handleAddLink = (parentKey: string) => {
+    const parentChildren = linkList.filter((link) => {
+      const childKeyParts = link.key.split("-");
+      const parentKeyParts = parentKey.split("-");
+      return (
+        childKeyParts.length === parentKeyParts.length + 1 &&
+        link.key.startsWith(`${parentKey}-`)
+      );
+    });
+
+    const childIndices = parentChildren.map((child) => {
+      const segments = child.key.split("-");
+      return Number(segments[segments.length - 1]);
+    });
+    const nextChildIndex =
+      childIndices.length > 0 ? Math.max(...childIndices) + 1 : 0;
+
+    setAddLinkModes((prev) => [...prev, nextChildIndex]);
   };
 
   const handleCancelLink = (modeKey: number) => {
     setAddLinkModes((prev) => prev.filter((k) => k !== modeKey));
   };
 
-  const handleDelete = (id: string) => {
-    setLinkList((prev) => {
-      const deleteRecursively = (links: Link[], targetId: string): Link[] => {
-        return links
-          .filter((l) => l.id !== targetId)
-          .map((l) => ({
-            ...l,
-            children: l.children
-              ? deleteRecursively(l.children, targetId)
-              : undefined,
-          }));
-      };
+  const handleDelete = (keyToDelete: string) => {
+    const isAffectedSibling = (
+      linkKey: string,
+      deleteKeySegments: string[]
+    ) => {
+      const keySegments = linkKey.split("-");
+      const sameParent =
+        keySegments.slice(0, deleteKeySegments.length - 1).join("-") ===
+        deleteKeySegments.slice(0, -1).join("-");
+      const comesAfterDeletedSibling =
+        Number(keySegments[deleteKeySegments.length - 1]) >
+        Number(deleteKeySegments[deleteKeySegments.length - 1]);
 
-      return deleteRecursively(prev, id);
+      return sameParent && comesAfterDeletedSibling;
+    };
+
+    const deleteKeySegments = keyToDelete.split("-");
+
+    const remainingLinks = linkList.filter(
+      (link) => !link.key.startsWith(keyToDelete)
+    );
+
+    const updatedLinks = remainingLinks.map((link) => {
+      if (isAffectedSibling(link.key, deleteKeySegments)) {
+        const keySegments = link.key.split("-");
+        keySegments[deleteKeySegments.length - 1] = String(
+          Number(keySegments[deleteKeySegments.length - 1]) - 1
+        );
+        return {
+          ...link,
+          key: keySegments.join("-"),
+        };
+      }
+      return link;
     });
+    setLinkList(updatedLinks);
   };
 
   const buttons = [
     {
       label: "Usuń",
-      props: { onClick: () => handleDelete(id) },
+      props: { onClick: () => handleDelete(key) },
     },
     { label: "Edytuj", props: { onClick: () => setEditMode(true) } },
-    { label: "Dodaj pozycję menu", props: { onClick: () => handleAddLink() } },
+    {
+      label: "Dodaj pozycję menu",
+      props: { onClick: () => handleAddLink(key) },
+    },
   ];
 
   return (
-    <div className="flex flex-col" ref={setDraggableNodeRef}>
+    <div className="flex flex-col border-none" ref={setDraggableNodeRef}>
       {!editMode && (
         <div
           ref={setDroppableNodeRef}
-          className={`flex py-4 px-6 bg-bg-primary border-border-primary text-sm justify-between w-full 
-            ${nestLevel > 1 ? "rounded-bl-lg border-l" : ""} 
-          ${
-            (children && children.length > 0) || addLinkModes.length > 0
-              ? "border-b"
-              : ""
-          }
+          className={`flex py-4 px-6 bg-bg-primary border-border-primary text-sm justify-between border-b
+            ${nestLevel > 0 ? "rounded-bl-lg border-l" : ""} 
           ${parentEditMode ? "rounded-tl-lg border-t" : ""}
           `}
+          style={{
+            ...indentation,
+          }}
         >
           <div className="flex items-center" ref={setDraggableNodeRef}>
             <div {...attributes} {...listeners} style={style}>
@@ -104,38 +149,28 @@ export const LinkListItem: React.FC<LinkListItemProps> = ({
           <ButtonGroup buttons={buttons} variant={ButtonTypes.SECONDARY} />
         </div>
       )}
-      {editMode ? (
-        <div className="py-5 pr-6">
-          {" "}
-          <ManageLink
-            setLinkList={setLinkList}
-            linkKey={key}
-            cancel={() => setEditMode(false)}
-            link={link}
-          />
-        </div>
-      ) : (
-        addLinkModes.map((modeKey) => (
-          <div key={modeKey} className="py-5 pr-6 ml-16">
+      <div style={{ ...indentation }}>
+        {editMode ? (
+          <div className="py-5 pr-6">
             <ManageLink
               setLinkList={setLinkList}
-              linkKey={`${key}-${modeKey}`}
-              cancel={() => handleCancelLink(modeKey)}
+              linkKey={key}
+              cancel={() => setEditMode(false)}
+              link={link}
             />
           </div>
-        ))
-      )}
-
-      {link.children?.map((child) => (
-        <div key={child.key} className="ml-16">
-          <LinkListItem
-            link={child}
-            setLinkList={setLinkList}
-            linkList={linkList}
-            parentEditMode={editMode}
-          />
-        </div>
-      ))}
+        ) : (
+          addLinkModes.map((modeKey) => (
+            <div key={modeKey} className="py-5 pr-6 ml-16">
+              <ManageLink
+                setLinkList={setLinkList}
+                linkKey={`${key}-${modeKey}`}
+                cancel={() => handleCancelLink(modeKey)}
+              />
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

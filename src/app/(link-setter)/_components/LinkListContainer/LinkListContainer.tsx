@@ -16,6 +16,36 @@ interface LinkListContainerProps {
   setLinkList: React.Dispatch<React.SetStateAction<Link[]>>;
 }
 
+const renderLinks = (
+  links: Link[],
+  setLinkList: React.Dispatch<React.SetStateAction<Link[]>>,
+  parentKey: string | null = null
+) => {
+  // Filter links to find direct children of the current parent
+  const parentChildren = links.filter((link) => {
+    if (parentKey === null) {
+      // Root-level links have no parent
+      return !link.key.includes("-");
+    }
+    const childKeyParts = link.key.split("-");
+    const parentKeyParts = parentKey.split("-");
+    return (
+      childKeyParts.length === parentKeyParts.length + 1 &&
+      link.key.startsWith(`${parentKey}-`)
+    );
+  });
+
+  return parentChildren.map((link) => (
+    <div key={link.key}>
+      <LinkListItem link={link} linkList={links} setLinkList={setLinkList} />
+      <div className="pl-4">
+        {/* Recursively render children */}
+        {renderLinks(links, setLinkList, link.key)}
+      </div>
+    </div>
+  ));
+};
+
 export const LinkListContainer: React.FC<LinkListContainerProps> = ({
   linkList,
   setLinkList,
@@ -30,79 +60,18 @@ export const LinkListContainer: React.FC<LinkListContainerProps> = ({
   const handleCancelLink = (key: number) => {
     setAddLinkModes((prev) => prev.filter((k) => k !== key));
   };
+
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
+    console.log(e);
     if (!over || !active.data.current || over.id === active.id) return;
-
-    const activeId = active.id as string;
-    const overId = over.id as string;
-    const activeData = active.data.current;
-
-    setLinkList((prevLinks) => {
-      const findLinkByKey = (links: Link[], key: string): Link | null => {
-        for (const link of links) {
-          if (link.key === key) return link;
-          if (link.children) {
-            const found = findLinkByKey(link.children, key);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-
-      const removeActiveData = (links: Link[]): Link[] =>
-        links
-          .filter((link) => link.key !== activeId)
-          .map((link) => ({
-            ...link,
-            children: link.children
-              ? removeActiveData(link.children)
-              : undefined,
-          }));
-      const insertActiveData = (links: Link[], activeData: Link): Link[] => {
-        return links.map((link) => {
-          if (link.key === overId) {
-            const newChildren = link.children ? [...link.children] : [];
-            const newKey = `${overId}-${newChildren.length}`;
-            newChildren.push({
-              ...activeData,
-              key: newKey,
-            });
-            return { ...link, children: newChildren };
-          }
-
-          return {
-            ...link,
-            children: link.children
-              ? insertActiveData(link.children, activeData)
-              : undefined,
-          };
-        });
-      };
-
-      const linksWithoutActive = removeActiveData(prevLinks);
-
-      const updatedLinks = insertActiveData(
-        linksWithoutActive,
-        activeData as Link
-      );
-
-      return updatedLinks;
-    });
   };
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <SortableContext items={linkList}>
         <Box className="flex flex-col divide-y divide-border-primary">
-          {linkList.map((link) => (
-            <LinkListItem
-              link={link}
-              key={link.key}
-              setLinkList={setLinkList}
-              linkList={linkList}
-            />
-          ))}
+          {renderLinks(linkList, setLinkList)}
           {addLinkModes.map((key) => (
             <div className="py-4 px-6" key={key}>
               <ManageLink
