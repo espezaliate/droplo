@@ -19,7 +19,6 @@ export default function Home() {
       ) : (
         <LinkListContainer linkList={linkList} setLinkList={setLinkList} />
       )}
-      <ManageLink setLinkList={setLinkList} />
     </div>
   );
 }

@@ -38,7 +38,7 @@ export const EmptyMenu: React.FC<EmptyMenuProps> = ({ setLinkList }) => {
     <ManageLink
       setLinkList={setLinkList}
       cancel={onCancelAddLink}
-      linkKey="1"
+      linkKey="0"
     />
   );
 };

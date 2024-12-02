@@ -26,14 +26,53 @@ export const ManageLink: React.FC<ManageLinkProps> = ({
   });
 
   const onSubmit = handleSubmit((data) => {
-    if (link) {
-      setLinkList((prev) =>
-        prev.map((l) => (l.id === link.id ? { ...link, ...data } : l))
-      );
-    } else {
-      const id = crypto.randomUUID();
-      setLinkList((prev) => [...prev, { id, key: linkKey, ...data }]);
-    }
+    const id = crypto.randomUUID();
+    const newLink = { id, key: linkKey, ...data };
+
+    setLinkList((prev) => {
+      const keySegments = linkKey.split("-").map(Number);
+
+      if (keySegments.length === 1) {
+        const existingIndex = prev.findIndex((link) => link.key === linkKey);
+        if (existingIndex !== -1) {
+          prev[existingIndex] = { ...prev[existingIndex], ...data };
+          return [...prev];
+        }
+        return [...prev, newLink];
+      }
+
+      const updatedList = [...prev];
+
+      const insertNestedLink = (links: Link[], levels: number[]): void => {
+        const [currentLevel, ...remainingLevels] = levels;
+        const parent = links[currentLevel];
+
+        if (!parent) return;
+        if (!parent.children) parent.children = [];
+
+        if (remainingLevels.length === 1) {
+          const existingChildIndex = parent.children.findIndex(
+            (child) => child.key === linkKey
+          );
+
+          if (existingChildIndex !== -1) {
+            parent.children[existingChildIndex] = {
+              ...parent.children[existingChildIndex],
+              ...data,
+            };
+          } else {
+            parent.children.push(newLink);
+          }
+        } else {
+          insertNestedLink(parent.children, remainingLevels);
+        }
+      };
+
+      insertNestedLink(updatedList, keySegments);
+
+      return updatedList;
+    });
+
     cancel();
   });
 

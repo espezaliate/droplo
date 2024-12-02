@@ -3,6 +3,7 @@ export interface Link {
   key: string;
   name: string;
   url?: string;
+  children?: Link[];
 }
 
 export interface ManageLinkFormValues {
